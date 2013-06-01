@@ -3,6 +3,7 @@ var assert = require('assert')
   , http = require('http')
   , path = require('path')
   , uuid = require('node-uuid')
+  , gm = require('gm')
   , request = require('request')
   , buffertools = require('buffertools')
   , Framer = require('..')
@@ -74,7 +75,12 @@ describe('test image downloads', function () {
   });
 
   it('should resize crop center image', function (done) {
-    fs.readFile(path.join(__dirname, 'image-resize-crop-center.jpg'), function (err, data) {
+    var w=50, h=50;
+    gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
+    .resize(w, h, '^')
+    .gravity('Center')
+    .crop(w, h, 0, 0)
+    .toBuffer(function (err, data) {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50x50/' + prefix + '/' + uid + '/image.jpg';
 
@@ -88,7 +94,10 @@ describe('test image downloads', function () {
   });
 
   it('should resize within box', function (done) {
-    fs.readFile(path.join(__dirname, 'image-resize-within.jpg'), function (err, data) {
+    var w=50, h=50;
+    gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
+    .resize(w, h)
+    .toBuffer(function (err, data) {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50-50/' + prefix + '/' + uid + '/image.jpg';
 
@@ -102,7 +111,10 @@ describe('test image downloads', function () {
   });
 
   it('should resize but fill box', function (done) {
-    fs.readFile(path.join(__dirname, 'image-resize-fill.jpg'), function (err, data) {
+    var w=50, h=50;
+    gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
+    .resize(w, h, '^')
+    .toBuffer(function (err, data) {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
 
@@ -116,17 +128,13 @@ describe('test image downloads', function () {
   });
 
   it('should return max-age header', function (done) {
-    fs.readFile(path.join(__dirname, 'image-resize-fill.jpg'), function (err, data) {
-      var expectedFile = data;
-      var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
+    var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
 
-      request(url, { encoding: null }, function (err, res, body) {
-        assert.ifError(err);
-        assert.equal(200, res.statusCode);
-        assert.equal('max-age: ' + maxAge, res.headers['cache-control']);
-        assert(expectedFile.equals(body))
-        done();
-      });
+    request(url, { encoding: null }, function (err, res, body) {
+      assert.ifError(err);
+      assert.equal(200, res.statusCode);
+      assert.equal('max-age: ' + maxAge, res.headers['cache-control']);
+      done();
     });
   });
 
