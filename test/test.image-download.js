@@ -4,6 +4,7 @@ var assert = require('assert')
   , path = require('path')
   , uuid = require('node-uuid')
   , request = require('request')
+  , buffertools = require('buffertools')
   , Framer = require('..')
   ;
 
@@ -77,10 +78,10 @@ describe('test image downloads', function () {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50x50/' + prefix + '/' + uid + '/image.jpg';
 
-      request(url, function (err, res, body) {
+      request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
-        assert.equal(expectedFile.toString(), body.toString());
+        assert(expectedFile.equals(body))
         done();
       });
     });
@@ -91,10 +92,10 @@ describe('test image downloads', function () {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50-50/' + prefix + '/' + uid + '/image.jpg';
 
-      request(url, function (err, res, body) {
+      request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
-        assert.equal(expectedFile.toString(), body.toString());
+        assert(expectedFile.equals(body))
         done();
       });
     });
@@ -105,10 +106,10 @@ describe('test image downloads', function () {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
 
-      request(url, function (err, res, body) {
+      request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
-        assert.equal(expectedFile.toString(), body.toString());
+        assert(expectedFile.equals(body))
         done();
       });
     });
@@ -119,11 +120,11 @@ describe('test image downloads', function () {
       var expectedFile = data;
       var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
 
-      request(url, function (err, res, body) {
+      request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
         assert.equal('max-age: ' + maxAge, res.headers['cache-control']);
-        assert.equal(expectedFile.toString(), body.toString());
+        assert(expectedFile.equals(body))
         done();
       });
     });

@@ -32,7 +32,8 @@
   },
   "devDependencies": {
     "mocha": "~1.10.0",
-    "request": "~2.21.0"
+    "request": "~2.21.0",
+    "buffertools": "~1.1.1"
   },
   "engines": {
     "node": ">=0.10.0"
