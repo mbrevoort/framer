@@ -4,9 +4,9 @@
 
 Framer is a simple, dynamic file proxy and photo resizing http server intended to be behind an http cache or act as a CDN root server. Framer accepts uploads and stores it's files in Amazon S3.
 
-Framer does not cache anything itself but rather sets a max-age Cache-Control header so the browser or caching proxy should act appropriately.
+Framer does not cache anything itself but rather sets a max-age Cache-Control header so the browser or caching proxy should act appropriately. It keeps the files it manages in S3 side-stepping the burden of managing, syncronizing and backing files across instances essentially making the instances stateless.
 
-Framer keeps the files it manages in S3 side-stepping the burden of managing, syncronizing and backing files across instances essentially making the instances stateless.
+Lastly, Framer will generate a path to each file prefixed with a `uuid` that should be difficult to guess. All files are essentially public and accessible if you know the URI.
 
 ## Usage
 
