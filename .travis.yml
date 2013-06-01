@@ -1,6 +1,6 @@
 before_install:
   - sudo apt-get update
-  - sudo apt-get install graphicsmagick
+  - sudo apt-get install imagemagick graphicsmagick
 language: node_js
 node_js:
   - 0.10
