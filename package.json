@@ -1,0 +1,40 @@
+{
+  "name": "framer",
+  "version": "0.0.0",
+  "description": "A simple dynamic photo resizing http server intended to be behind an http cache that stores files in S3",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/test*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:mbrevoort/framer.git"
+  },
+  "keywords": [
+    "image",
+    "resizing",
+    "server",
+    "cache",
+    "aws",
+    "amazon",
+    "s3"
+  ],
+  "author": "Mike Brevoort",
+  "license": "MIT",
+  "dependencies": {
+    "gm": "~1.9.1",
+    "knox": "~0.8.2",
+    "mkdirp": "~0.3.5",
+    "node-uuid": "~1.4.0",
+    "multiparty": "~2.1.7",
+    "batch": "~0.3.2",
+    "mime": "~1.2.9"
+  },
+  "devDependencies": {
+    "mocha": "~1.10.0",
+    "request": "~2.21.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}
