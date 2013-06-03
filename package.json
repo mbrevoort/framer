@@ -4,7 +4,7 @@
   "description": "A simple dynamic photo resizing http server intended to be behind an http cache that stores files in S3",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/test*"
+    "test": "jshint *.js --config .jshintrc && mocha test/test*"
   },
   "repository": {
     "type": "git",
@@ -33,7 +33,8 @@
   "devDependencies": {
     "mocha": "~1.10.0",
     "request": "~2.21.0",
-    "buffertools": "~1.1.1"
+    "buffertools": "~1.1.1",
+    "jshint": "~2.1.3"
   },
   "engines": {
     "node": ">=0.10.0"

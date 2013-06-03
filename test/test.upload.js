@@ -43,7 +43,7 @@ describe('test upload', function () {
       s3: s3Options,
     });
     framer._s3Client = s3Client;
-    var handleUpload = framer.handleUpload();
+    var handleUpload = framer.handleUpload({ prefix: '/prefix' });
 
     var PORT = Math.ceil(Math.random()*2000 + 1024);
     var client = http.createServer(function (req, res) {
@@ -51,9 +51,10 @@ describe('test upload', function () {
     }).listen(PORT);
 
     request
-      .post('http://127.0.0.1:' + PORT + '/', function (err, res, body) {
+      .post('http://127.0.0.1:' + PORT + '/', { json: true }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
+        assert(body.uri.indexOf('/prefix/') === 0, 'uri should be prefixed with the prefix option')
         done();
       })
       .form().append("filename", fs.createReadStream(path.join(__dirname, "image.jpg")));

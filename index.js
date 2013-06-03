@@ -22,17 +22,19 @@ var Framer = module.exports = function Framer(opts) {
 
   this.handleUpload = function (opts) {
     if (!opts) opts = {};
-    var makePublicReadable = opts.makePublicReadable || false;
-    var log = opts.log || function (){};
+    opts.prefix = opts.prefix || "";
 
-    var authHandler = opts.authHandler;
+    var makePublicReadable = opts.makePublicReadable || false
+      , log = opts.log || function (){}
+      , prefix = opts.prefix || ""
+      , authHandler = opts.authHandler;
 
     return function (req, res) {
-      var headers = {};
+      var headers = {}
+        , form = new multiparty.Form()
+        , batch = new Batch();
 
       if (makePublicReadable) headers['x-amz-acl'] = 'public-read';
-      var form = new multiparty.Form();
-      var batch = new Batch();
 
       var onUnexpectedEnd = function () {
         res.writeHead(500, {'content-type': 'text/plain'});
@@ -83,7 +85,7 @@ var Framer = module.exports = function Framer(opts) {
 
           res.writeHead(res.statusCode, {'content-type': 'application/json'});
           if (s3Response.statusCode === 200) {
-            res.end(JSON.stringify({ statusCode: 200, uriSuffix: '/raw' + destPath}));
+            res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath}));
           }
           else {
             var bufs = [];
@@ -92,8 +94,7 @@ var Framer = module.exports = function Framer(opts) {
               // just return the ugly xml body for now
               var body =Buffer.concat(bufs).toString();
               res.end(JSON.stringify({ statusCode: s3Response.statusCode, error: body }));
-            })
-
+            });
           }
         });
       });

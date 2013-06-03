@@ -37,7 +37,8 @@ var handleUpload = framer.handleUpload({
       cb(null, userId);
     else
       cb(new Error('unauthorized));
-  }
+  },
+  prefix: '/img'  // uri prefix you expect to serve images from
 });
 
 if (req.url === '/upload' && req.headers['content-type']) {
@@ -45,12 +46,12 @@ if (req.url === '/upload' && req.headers['content-type']) {
 }
 ```
 
-The result of a successful upload will be an `application/json` response with a `uri` property containing the relative URI of the new resource. *Note*: this doesn't include the protocol, host or path prefix you may use to serve the file. For example:
+The result of a successful upload will be an `application/json` response with a `uri` property containing the relative URI of the new resource. *Note*: this doesn't include the protocol, host or port and will be prefixed with `opts.prefix` if specified. For example:
 
 ```
 {
     "statusCode": 200,
-    "uriSuffix": "/raw/c84d9b70-caca-11e2-8e30-ab79663612ac/image.jpg"
+    "uri": "/prefix/raw/c84d9b70-caca-11e2-8e30-ab79663612ac/image.jpg"
 }
 ```
 
