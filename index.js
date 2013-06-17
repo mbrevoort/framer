@@ -37,8 +37,7 @@ var Framer = module.exports = function Framer(opts) {
       if (makePublicReadable) headers['x-amz-acl'] = 'public-read';
 
       var onUnexpectedEnd = function () {
-        res.writeHead(500, {'content-type': 'text/plain'});
-        res.end('incomplete upload');
+        self._handleError(500, res, new Error('incomplete upload'));
       };
 
       batch.push(function(cb) {
@@ -71,10 +70,11 @@ var Framer = module.exports = function Framer(opts) {
           , filename = part.filename
           , destPrefix = (userPrefix) ? '/' + userPrefix + '/' : '/'
           , destPath = encodeURI(destPrefix + uuid.v1() + '/' + filename)
+          , type = mime.lookup(destPath)
           ;
 
         headers['Content-Length'] = part.byteCount;
-        headers['Content-Type'] = mime.lookup(destPath);
+        headers['Content-Type'] = type;
 
         self._s3Client.putStream(part, destPath, headers, function (err, s3Response) {
           if (err) {
@@ -85,7 +85,7 @@ var Framer = module.exports = function Framer(opts) {
 
           res.writeHead(res.statusCode, {'content-type': 'application/json'});
           if (s3Response.statusCode === 200) {
-            res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath}));
+            res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath, type: type }));
           }
           else {
             var bufs = [];

@@ -55,6 +55,7 @@ describe('test upload', function () {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
         assert(body.uri.indexOf('/prefix/') === 0, 'uri should be prefixed with the prefix option')
+        assert.equal('image/jpeg', body.type);
         done();
       })
       .form().append("filename", fs.createReadStream(path.join(__dirname, "image.jpg")));
