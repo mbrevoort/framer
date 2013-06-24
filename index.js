@@ -111,7 +111,7 @@ var Framer = module.exports = function Framer(opts) {
       form.on('close', onUnexpectedEnd);
       form.on('error', function(err) {
         //just log the errors for now
-        console.log(err)
+        console.log(err);
       });
       form.parse(req);
     };
