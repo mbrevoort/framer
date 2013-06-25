@@ -1,6 +1,6 @@
 {
   "name": "framer",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "A simple dynamic photo resizing http server intended to be behind an http cache that stores files in S3",
   "main": "index.js",
   "scripts": {
