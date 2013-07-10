@@ -23,11 +23,13 @@ var Framer = module.exports = function Framer(opts) {
   this.handleUpload = function (opts) {
     if (!opts) opts = {};
     opts.prefix = opts.prefix || "";
+    opts.maxsize = opts.maxsize || "";
 
     var makePublicReadable = opts.makePublicReadable || false
       , log = opts.log || function (){}
       , prefix = opts.prefix || ""
-      , authHandler = opts.authHandler;
+      , authHandler = opts.authHandler
+      , maxsize = opts.maxsize;
 
     return function (req, res) {
       var acceptHeader = req.headers.accept;
@@ -35,9 +37,8 @@ var Framer = module.exports = function Framer(opts) {
       var isTypeText = (/text\/text/).test(acceptHeader);
       var contentType = 'application/json';
       
-      if(isTypeHtml) contentType = 'text/html';
-      else if(isTypeText) contentType = 'text/text';
-      
+      if (isTypeHtml) contentType = 'text/html';
+      else if (isTypeText) contentType = 'text/text';    
 
       var headers = {}
         , form = new multiparty.Form()
@@ -77,10 +78,16 @@ var Framer = module.exports = function Framer(opts) {
         var userPrefix = results[0]
           , part = results[1]
           , filename = part.filename
+          , actualSize = part.byteCount
           , destPrefix = (userPrefix) ? '/' + userPrefix + '/' : '/'
           , destPath = encodeURI(destPrefix + uuid.v1() + '/' + filename)
           , type = mime.lookup(destPath)
           ;
+
+        if (actualSize >= maxsize ) {
+          res.writeHead(413, {'content-type': 'application/json'});
+          return res.end('file-too-large');
+        }
 
         headers['Content-Length'] = part.byteCount;
         headers['Content-Type'] = type;
