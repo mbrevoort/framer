@@ -83,10 +83,7 @@ var Framer = module.exports = function Framer(opts) {
           , destPath = encodeURI(destPrefix + uuid.v1() + '/' + filename)
           , type = mime.lookup(destPath)
           ;
-        console.log('TOM!!!!!!!!!!!!!!!!!!!!')
-        console.log(actualSize)
-        console.log(maxsize)
-        console.log('!!!!!!!!!!!!!!!!!TOM')
+
         if (actualSize >= maxsize ) {
           res.writeHead(413, {'content-type': 'application/json'});
           return res.end('file-too-large');
