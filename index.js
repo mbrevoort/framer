@@ -134,7 +134,7 @@ var Framer = module.exports = function Framer(opts) {
 
       self._s3Client.get(path).on('response', function(s3res){
         if (opts.cacheMaxAge) {
-          res.setHeader('Cache-Control: max-age', opts.cacheMaxAge); // 1 week
+          res.setHeader('Cache-Control', 'public, max-age=' + opts.cacheMaxAge); 
         }
 
         s3res.on('error', function (err) {

@@ -133,7 +133,7 @@ describe('test image downloads', function () {
     request(url, { encoding: null }, function (err, res, body) {
       assert.ifError(err);
       assert.equal(200, res.statusCode);
-      assert.equal('max-age: ' + maxAge, res.headers['cache-control']);
+      assert.equal('public, max-age=' + maxAge, res.headers['cache-control']);
       done();
     });
   });
