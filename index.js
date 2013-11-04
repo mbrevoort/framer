@@ -141,12 +141,12 @@ var Framer = module.exports = function Framer(opts) {
           self._handleError(500, res, err);
         });
 
-        if (sizeOptions === 'raw') {
-          return s3res.pipe(res);
-        }
-
         if (s3res.statusCode !== 200) {
           return self._handleError(s3res.statusCode, res, new Error('not found'));
+        }
+        
+        if (sizeOptions === 'raw') {
+          return s3res.pipe(res);
         }
 
         self._transform(gm(s3res), sizeOptions)
