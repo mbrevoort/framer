@@ -70,6 +70,7 @@ describe('test image downloads', function () {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
         assert.equal(expectedFile.toString(), body.toString());
+        assert.equal('image/jpeg', res.headers['content-type']);
         done();
       });
     });
@@ -88,7 +89,8 @@ describe('test image downloads', function () {
       request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
-        assert(expectedFile.equals(body))
+        assert(expectedFile.equals(body));
+        assert.equal('image/jpeg', res.headers['content-type']);
         done();
       });
     });
@@ -105,7 +107,8 @@ describe('test image downloads', function () {
       request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
-        assert(expectedFile.equals(body))
+        assert(expectedFile.equals(body));
+        assert.equal('image/jpeg', res.headers['content-type']);
         done();
       });
     });
@@ -122,7 +125,8 @@ describe('test image downloads', function () {
       request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
         assert.equal(200, res.statusCode);
-        assert(expectedFile.equals(body))
+        assert(expectedFile.equals(body));
+        assert.equal('image/jpeg', res.headers['content-type']);
         done();
       });
     });
@@ -135,6 +139,7 @@ describe('test image downloads', function () {
       assert.ifError(err);
       assert.equal(200, res.statusCode);
       assert.equal('public, max-age=' + maxAge, res.headers['cache-control']);
+      assert.equal('image/jpeg', res.headers['content-type']);
       done();
     });
   });
