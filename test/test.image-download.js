@@ -80,7 +80,7 @@ describe('test image downloads', function () {
   });
 
   it('should resize crop center image', function (done) {
-    contentLength = 0;
+    contentLength = 1227;
     var w=50, h=50;
     gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
     .resize(w, h, '^')
