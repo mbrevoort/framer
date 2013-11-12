@@ -80,7 +80,7 @@ describe('test image downloads', function () {
   });
 
   it('should resize crop center image', function (done) {
-    contentLength = 1227;
+    contentLength = 192809;
     var w=50, h=50;
     gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
     .resize(w, h, '^')
@@ -100,7 +100,7 @@ describe('test image downloads', function () {
   });
 
   it('should resize within box', function (done) {
-    contentLength = 0;
+    contentLength = 192809;
     var w=50, h=50;
     gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
     .resize(w, h)
@@ -118,7 +118,7 @@ describe('test image downloads', function () {
   });
 
   it('should resize but fill box', function (done) {
-    contentLength = 0;
+    contentLength = 192809;
     var w=50, h=50;
     gm(fs.createReadStream(path.join(__dirname, 'image.jpg')))
     .resize(w, h, '^')
@@ -136,7 +136,7 @@ describe('test image downloads', function () {
   });
 
   it('should return max-age header', function (done) {
-    contentLength = 0;
+    contentLength = 192809;
     var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
 
     request(url, { encoding: null }, function (err, res, body) {
