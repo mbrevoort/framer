@@ -10,8 +10,7 @@ var assert = require('assert')
 describe('test image downloads', function () {
   var prefix = 'prefix',
       uid = uuid.v1(),
-      maxAge = 3600,
-      expectedFile = null;
+      maxAge = 3600;
 
   var s3Options = {
     secure: false,
@@ -30,6 +29,9 @@ describe('test image downloads', function () {
           if (imagePath === expectedPath) {
             var obj = fs.createReadStream(path.join(__dirname, 'file.txt'));
             obj.statusCode = 200;
+            obj.headers = {};
+            obj.headers['content-type'] = 'text/html';
+            obj.headers['content-length'] = 24;
             cb(obj);
           }
           else {
