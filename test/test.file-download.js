@@ -31,7 +31,6 @@ describe('test image downloads', function () {
             obj.statusCode = 200;
             obj.headers = {};
             obj.headers['content-type'] = 'text/html';
-            obj.headers['content-length'] = 24;
             cb(obj);
           }
           else {
