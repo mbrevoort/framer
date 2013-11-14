@@ -145,6 +145,8 @@ var Framer = module.exports = function Framer(opts) {
           return self._handleError(s3res.statusCode, res, new Error('not found'));
         }
         
+        res.setHeader('Content-Type', s3res.headers['content-type']);
+        
         if (sizeOptions === 'raw') {
           return s3res.pipe(res);
         }
@@ -177,6 +179,8 @@ var Framer = module.exports = function Framer(opts) {
         s3res.on('error', function (err) {
           self._handleError(500, res, err);
         });
+        
+        res.setHeader('Content-Type', s3res.headers['content-type']);
 
         return s3res.pipe(res);
       })
