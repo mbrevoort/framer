@@ -61,6 +61,40 @@ describe('test upload', function () {
       .form().append("filename", fs.createReadStream(path.join(__dirname, "image.jpg")));
   });
 
+  it('should take upload and execute callback function', function (done) {
+
+    var framer = new Framer({
+      s3: s3Options,
+    });
+    framer._s3Client = s3Client;
+    var handleUpload = framer.handleUpload({ prefix: '/prefix' });
+
+    var PORT = Math.ceil(Math.random()*2000 + 1024);
+    var client = http.createServer(function (req, res) {
+      
+      handleUploadHandler = function(err, s3Response){
+          if(err){
+            res.writeHead(500, {'content-type': 'application/json'});
+            res.end(JSON.stringify({ statusCode: 500, error: err.toString() }));  
+          } else {
+            res.end(JSON.stringify({ statusCode: 200, uri: s3Response.custom_uri.uri, type: s3Response.custom_uri.stype }));  
+          }
+      };
+
+      handleUpload(req, res, handleUploadHandler);
+    }).listen(PORT);
+
+    request
+      .post('http://127.0.0.1:' + PORT + '/', { json: true }, function (err, res, body) {
+        assert.ifError(err);
+        assert.equal(200, res.statusCode);
+        assert(body.uri.indexOf('/prefix/') === 0, 'uri should be prefixed with the prefix option')
+        assert.equal('image/jpeg', body.type);
+        done();
+      })
+      .form().append("filename", fs.createReadStream(path.join(__dirname, "image.jpg")));
+  });
+
   it('should delegate authoritation', function (done) {
 
     var authValue = 'foobarbaz';

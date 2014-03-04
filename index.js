@@ -101,6 +101,11 @@ var Framer = module.exports = function Framer(opts) {
           res.writeHead(res.statusCode, {'content-type': contentType});
           if (s3Response.statusCode === 200) {
             if(callback){
+              s3Response.custom_uri = {
+                uri: prefix + '/raw' + destPath,
+                type: type
+              };
+              
               callback(null, s3Response);
             } else {
               res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath, type: type }));  
