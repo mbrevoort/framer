@@ -77,7 +77,7 @@ describe('test upload', function () {
             res.writeHead(500, {'content-type': 'application/json'});
             res.end(JSON.stringify({ statusCode: 500, error: err.toString() }));  
           } else {
-            res.end(JSON.stringify({ statusCode: 200, uri: s3Response.custom_uri.uri, type: s3Response.custom_uri.stype }));  
+            res.end(JSON.stringify({ statusCode: 200, uri: s3Response.custom_uri.uri, type: s3Response.custom_uri.type }));  
           }
       };
 
