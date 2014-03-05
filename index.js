@@ -29,7 +29,9 @@ var Framer = module.exports = function Framer(opts) {
       , prefix = opts.prefix || ""
       , authHandler = opts.authHandler;
 
-    return function (req, res) {
+    return function (req, res, callback) {
+      callback = callback === undefined ? null : callback;
+
       var acceptHeader = req.headers.accept;
       var isTypeHtml = (/text\/html/).test(acceptHeader);
       var isTypeText = (/text\/text/).test(acceptHeader);
@@ -87,14 +89,27 @@ var Framer = module.exports = function Framer(opts) {
 
         self._s3Client.putStream(part, destPath, headers, function (err, s3Response) {
           if (err) {
-            res.writeHead(500, {'content-type': 'application/json'});
-            res.end(JSON.stringify({ statusCode: 500, error: err.toString() }));
+            if(callback){
+              callback(err, s3Response);
+            } else {
+              res.writeHead(500, {'content-type': 'application/json'});
+              res.end(JSON.stringify({ statusCode: 500, error: err.toString() }));  
+            }
             return;
           }
 
           res.writeHead(res.statusCode, {'content-type': contentType});
           if (s3Response.statusCode === 200) {
-            res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath, type: type }));
+            if(callback){
+              s3Response.custom_uri = {
+                uri: prefix + '/raw' + destPath,
+                type: type
+              };
+              
+              callback(null, s3Response);
+            } else {
+              res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath, type: type }));  
+            }
           }
           else {
             var bufs = [];
@@ -102,7 +117,13 @@ var Framer = module.exports = function Framer(opts) {
             s3Response.on('end', function () {
               // just return the ugly xml body for now
               var body =Buffer.concat(bufs).toString();
-              res.end(JSON.stringify({ statusCode: s3Response.statusCode, error: body }));
+
+              if(callback){
+                callback(null, s3Response);
+              }else {
+                res.end(JSON.stringify({ statusCode: s3Response.statusCode, error: body }));  
+              }
+              
             });
           }
         });
