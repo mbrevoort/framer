@@ -222,12 +222,12 @@ var Framer = module.exports = function Framer(opts) {
         cb = cb === undefined ? null : cb;
 
         uri = require('url').parse(req.url, true).pathname;
-        res.setHeader('Content-Type', s3res.headers['content-type']);
 
         self._s3Client.deleteFile(uri, function(err, res){
             if(cb){
               cb(err, res);
             } else {
+              res.setHeader('Content-Type', s3res.headers['content-type']);
               res.end(JSON.stringify({statusCode: 200, message: 'File deleted.'}));  
             }
         });
