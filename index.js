@@ -167,6 +167,7 @@ var Framer = module.exports = function Framer(opts) {
         }
         
         res.setHeader('Content-Type', s3res.headers['content-type']);
+        res.setHeader('transfer-encoding', 'chunked');
         
         if (sizeOptions === 'raw') {
           return s3res.pipe(res);

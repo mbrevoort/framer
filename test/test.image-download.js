@@ -109,6 +109,7 @@ describe('test image downloads', function () {
         assert.equal(200, res.statusCode);
         assert(expectedFile.equals(body));
         assert.equal('image/jpeg', res.headers['content-type']);
+		assert.equal('chunked', res.headers['transfer-encoding']);
         done();
       });
     });
@@ -127,6 +128,7 @@ describe('test image downloads', function () {
         assert.equal(200, res.statusCode);
         assert(expectedFile.equals(body));
         assert.equal('image/jpeg', res.headers['content-type']);
+		assert.equal('chunked', res.headers['transfer-encoding']);
         done();
       });
     });
@@ -140,6 +142,7 @@ describe('test image downloads', function () {
       assert.equal(200, res.statusCode);
       assert.equal('public, max-age=' + maxAge, res.headers['cache-control']);
       assert.equal('image/jpeg', res.headers['content-type']);
+      assert.equal('chunked', res.headers['transfer-encoding']);
       done();
     });
   });
