@@ -14,9 +14,9 @@ describe('test image downloads', function () {
 
   var s3Options = {
     secure: false,
-    key: 'bogus',
-    secret: 'bogus',
-    bucket: 'bogus'
+    key: process.env.S3KEY || 'bogus',
+    secret: process.env.S3SECRET || 'bogus',
+    bucket: process.env.S3BUCKET || 'bogus'
   };
 
   var s3Client = {
@@ -27,10 +27,12 @@ describe('test image downloads', function () {
       mock.on = function (evt, cb) {
         if (evt === 'response') {
           if (imagePath === expectedPath) {
+            var len = fs.statSync(path.join(__dirname, 'file.txt')).size;
             var obj = fs.createReadStream(path.join(__dirname, 'file.txt'));
             obj.statusCode = 200;
             obj.headers = {};
             obj.headers['content-type'] = 'text/html';
+            obj.headers['content-length'] = len;
             cb(obj);
           }
           else {
@@ -53,7 +55,7 @@ describe('test image downloads', function () {
   var serveFile = framer.serveFile({ prefix: '/file', cacheMaxAge: maxAge });
   var client = http.createServer(function (req, res) {
     serveFile(req, res);
-  }).listen(PORT);
+  });
 
   before(function (done) {
     client.listen(PORT, done);

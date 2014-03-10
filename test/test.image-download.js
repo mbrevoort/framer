@@ -29,10 +29,12 @@ describe('test image downloads', function () {
       mock.on = function (evt, cb) {
         if (evt === 'response') {
           if (imagePath === expectedPath) {
+            var len = fs.statSync(path.join(__dirname, 'file.txt')).size;
             var obj = fs.createReadStream(path.join(__dirname, 'image.jpg'));
             obj.statusCode = 200;
             obj.headers = {};
             obj.headers['content-type'] = 'image/jpeg';
+            obj.headers['content-length'] = len;
             cb(obj);
           }
           else {
@@ -71,6 +73,7 @@ describe('test image downloads', function () {
         assert.equal(200, res.statusCode);
         assert.equal(expectedFile.toString(), body.toString());
         assert.equal('image/jpeg', res.headers['content-type']);
+        assert.ok(res.headers['content-length']);
         done();
       });
     });
@@ -109,6 +112,7 @@ describe('test image downloads', function () {
         assert.equal(200, res.statusCode);
         assert(expectedFile.equals(body));
         assert.equal('image/jpeg', res.headers['content-type']);
+		assert.equal('chunked', res.headers['transfer-encoding']);
         done();
       });
     });
@@ -127,6 +131,7 @@ describe('test image downloads', function () {
         assert.equal(200, res.statusCode);
         assert(expectedFile.equals(body));
         assert.equal('image/jpeg', res.headers['content-type']);
+		assert.equal('chunked', res.headers['transfer-encoding']);
         done();
       });
     });
@@ -140,6 +145,7 @@ describe('test image downloads', function () {
       assert.equal(200, res.statusCode);
       assert.equal('public, max-age=' + maxAge, res.headers['cache-control']);
       assert.equal('image/jpeg', res.headers['content-type']);
+      assert.equal('chunked', res.headers['transfer-encoding']);
       done();
     });
   });
