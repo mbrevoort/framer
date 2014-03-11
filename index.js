@@ -220,6 +220,28 @@ var Framer = module.exports = function Framer(opts) {
     };
   };
 
+
+  this.deleteFile = function(opts){
+      if (!opts) opts = {};
+      opts.prefix = opts.prefix || "";
+
+      return function(req, res, cb) {
+        cb = cb === undefined ? null : cb;
+
+        uri = require('url').parse(req.url, true).pathname;
+
+        self._s3Client.deleteFile(uri, function(err, res){
+            if(cb){
+              cb(err, res);
+            } else {
+              res.setHeader('Content-Type', s3res.headers['content-type']);
+              res.end(JSON.stringify({statusCode: 200, message: 'File deleted.'}));  
+            }
+        });
+      }; // end of return function object
+      
+  }; // end of deleteFile
+
   this._handleError = function (code, res, err) {
     res.writeHead(code, {'content-type': 'application/json'});
     res.end(JSON.stringify({ statusCode: code, error: err.toString() }));
