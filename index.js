@@ -156,6 +156,7 @@ var Framer = module.exports = function Framer(opts) {
       var url_parts = _parse_url(req);
       var width = url_parts.query.width;
       var height = url_parts.query.height;
+      var box = url_parts.query.box;
 
       var parts = url.split('/');
       var path = '/' + parts.slice(2).join('/');
@@ -183,7 +184,7 @@ var Framer = module.exports = function Framer(opts) {
           return s3res.pipe(res);
         }
 
-        self._resize(gm(s3res), width, height)
+        self._resize(gm(s3res), width, height, box.toLowerCase())
           .stream()
           .pipe(res);
       })
@@ -255,8 +256,14 @@ var Framer = module.exports = function Framer(opts) {
   };
 
 
-  this._resize = function(obj, width, height){
-    return obj.resize(width, height, '^');
+  this._resize = function(obj, width, height, box){
+    if(box === 'center' || box === 'fill'){
+      obj.resize(width, height, '^');
+    } else {
+      obj.resize(width, height);
+    }
+
+    return obj;
   };
 
   this._transform = function (obj, optionsString) {
