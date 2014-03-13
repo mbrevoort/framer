@@ -88,7 +88,7 @@ describe('test image downloads', function () {
     .toBuffer(function (err, data) {
       var expectedFile = data;
       // var url = 'http://127.0.0.1:' + PORT + '/img/50x50/' + prefix + '/' + uid + '/image.jpg';
-      var url = 'http://127.0.0.1:' + PORT + '/img/' + prefix + '/' + uid + '/image.jpg?width=50&height=50&box=center';
+      var url = 'http://127.0.0.1:' + PORT + '/img/50x50/' + prefix + '/' + uid + '/image.jpg';
 
       request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
@@ -106,7 +106,7 @@ describe('test image downloads', function () {
     .resize(w, h)
     .toBuffer(function (err, data) {
       var expectedFile = data;
-      var url = 'http://127.0.0.1:' + PORT + '/img/' + prefix + '/' + uid + '/image.jpg?width=50&height=50';
+      var url = 'http://127.0.0.1:' + PORT + '/img/50-50/' + prefix + '/' + uid + '/image.jpg';
 
       request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);
@@ -125,7 +125,7 @@ describe('test image downloads', function () {
     .resize(w, h, '^')
     .toBuffer(function (err, data) {
       var expectedFile = data;
-      var url = 'http://127.0.0.1:' + PORT + '/img/' + prefix + '/' + uid + '/image.jpg?width=50&height=50&box=fill';
+      var url = 'http://127.0.0.1:' + PORT + '/img/50+50/' + prefix + '/' + uid + '/image.jpg';
 
       request(url, { encoding: null }, function (err, res, body) {
         assert.ifError(err);

@@ -159,6 +159,7 @@ var Framer = module.exports = function Framer(opts) {
       var box = url_parts.query.box;
 
       var parts = url.split('/');
+      var sizeOptions = parts[1];
       var path = '/' + parts.slice(2).join('/');
 
       self._s3Client.get(path).on('response', function(s3res){
@@ -177,16 +178,24 @@ var Framer = module.exports = function Framer(opts) {
         res.setHeader('Content-Type', s3res.headers['content-type']);
         res.setHeader('transfer-encoding', 'chunked');
         
-        if (!width || !height) {
+        if (sizeOptions === 'raw' || (!width && !height)) {
           if (s3res.headers['content-length']) {
             res.setHeader('Content-Length', s3res.headers['content-length']);
           }
           return s3res.pipe(res);
         }
 
-        self._resize(gm(s3res), width, height, box.toLowerCase())
+        if(sizeOptions !=== 'raw'){
+          self._transform(gm(s3res), width, height, box.toLowerCase())
           .stream()
           .pipe(res);
+        } else {
+          self._resize(gm(s3res), width, height, box.toLowerCase())
+          .stream()
+          .pipe(res);  
+        }
+
+        
       })
       .on('error', function (err) {
           self._handleError(500, res, err);
