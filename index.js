@@ -234,7 +234,7 @@ var Framer = module.exports = function Framer(opts) {
             if(cb){
               cb(err, res);
             } else {
-              res.setHeader('Content-Type', s3res.headers['content-type']);
+              res.setHeader('Content-Type', res.headers['content-type']);
               res.end(JSON.stringify({statusCode: 200, message: 'File deleted.'}));  
             }
         });
