@@ -230,12 +230,18 @@ var Framer = module.exports = function Framer(opts) {
 
         uri = require('url').parse(req.url, true).pathname;
 
-        self._s3Client.deleteFile(uri, function(err, res){
+        self._s3Client.deleteFile(uri, function(err, s3Res){
             if(cb){
-              cb(err, res);
+              cb(err, s3Res);
             } else {
-              res.setHeader('Content-Type', res.headers['content-type']);
-              res.end(JSON.stringify({statusCode: 200, message: 'File deleted.'}));  
+              res.setHeader('Content-Type', s3Res.headers['content-type']);
+
+              if(err){
+                res.end(JSON.stringify({statusCode: s3Res.statusCode, message: err.toString()}));  
+              } else {
+                res.end(JSON.stringify({statusCode: s3Res.statusCode, message: 'File deleted.'}));    
+              }
+              
             }
         });
       }; // end of return function object
