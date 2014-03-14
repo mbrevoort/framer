@@ -87,6 +87,7 @@ describe('test image downloads', function () {
     .crop(w, h, 0, 0)
     .toBuffer(function (err, data) {
       var expectedFile = data;
+      // var url = 'http://127.0.0.1:' + PORT + '/img/50x50/' + prefix + '/' + uid + '/image.jpg';
       var url = 'http://127.0.0.1:' + PORT + '/img/50x50/' + prefix + '/' + uid + '/image.jpg';
 
       request(url, { encoding: null }, function (err, res, body) {

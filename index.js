@@ -138,6 +138,12 @@ var Framer = module.exports = function Framer(opts) {
     };
   };
 
+  /* Parse URL and return in parts.
+  */
+  function _parse_url(request){
+    return require('url').parse(request.url, true);
+  }
+
   this.serveImage = function (opts) {
     if (!opts) opts = {};
     opts.prefix = opts.prefix || "";
@@ -146,9 +152,12 @@ var Framer = module.exports = function Framer(opts) {
 
     return function (req, res) {
       var url = req.url.substring(opts.prefix.length);
-      //20-20 min
-      //20x20 resize, center crop
-      //20+20 max
+
+      var url_parts = _parse_url(req);
+      var width = url_parts.query.width;
+      var height = url_parts.query.height;
+      var box = url_parts.query.box;
+
       var parts = url.split('/');
       var sizeOptions = parts[1];
       var path = '/' + parts.slice(2).join('/');
@@ -169,16 +178,24 @@ var Framer = module.exports = function Framer(opts) {
         res.setHeader('Content-Type', s3res.headers['content-type']);
         res.setHeader('transfer-encoding', 'chunked');
         
-        if (sizeOptions === 'raw') {
+        if (sizeOptions === 'raw' || (!width && !height)) {
           if (s3res.headers['content-length']) {
             res.setHeader('Content-Length', s3res.headers['content-length']);
           }
           return s3res.pipe(res);
         }
 
-        self._transform(gm(s3res), sizeOptions)
+        if(sizeOptions !=== 'raw'){
+          self._transform(gm(s3res), width, height, box.toLowerCase())
           .stream()
           .pipe(res);
+        } else {
+          self._resize(gm(s3res), width, height, box.toLowerCase())
+          .stream()
+          .pipe(res);  
+        }
+
+        
       })
       .on('error', function (err) {
           self._handleError(500, res, err);
@@ -251,6 +268,17 @@ var Framer = module.exports = function Framer(opts) {
   this._handleError = function (code, res, err) {
     res.writeHead(code, {'content-type': 'application/json'});
     res.end(JSON.stringify({ statusCode: code, error: err.toString() }));
+  };
+
+
+  this._resize = function(obj, width, height, box){
+    if(box === 'center' || box === 'fill'){
+      obj.resize(width, height, '^');
+    } else {
+      obj.resize(width, height);
+    }
+
+    return obj;
   };
 
   this._transform = function (obj, optionsString) {
