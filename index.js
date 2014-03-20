@@ -176,9 +176,7 @@ var Framer = module.exports = function Framer(opts) {
           return s3res.pipe(res);
         }
 
-        self._transform(gm(s3res), sizeOptions)
-          .stream()
-          .pipe(res);
+        self._transform(gm(s3res), sizeOptions).stream().pipe(res);
       })
       .on('error', function (err) {
           self._handleError(500, res, err);
@@ -206,9 +204,9 @@ var Framer = module.exports = function Framer(opts) {
         });
         
         res.setHeader('Content-Type', s3res.headers['content-type']);
-		if (s3res.headers['content-length']) {
-          res.setHeader('Content-Length', s3res.headers['content-length']);
-		}
+    		if (s3res.headers['content-length']) {
+              res.setHeader('Content-Length', s3res.headers['content-length']);
+    		}
 
         return s3res.pipe(res);
       })
