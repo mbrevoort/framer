@@ -225,25 +225,19 @@ var Framer = module.exports = function Framer(opts) {
       if (!opts) opts = {};
       opts.prefix = opts.prefix || "";
 
-      return function(req, res, cb) {
+      return function(req, res, uri, cb) {
         cb = cb === undefined ? null : cb;
 
-        uri = require('url').parse(req.url, true).pathname;
+         self._s3Client.del(uri).on('response', function(s3res){
 
-        self._s3Client.deleteFile(uri, function(err, s3Res){
-            if(cb){
-              cb(err, s3Res);
-            } else {
-              res.setHeader('Content-Type', s3Res.headers['content-type']);
+            s3res.on('error', function (err) {
+              self._handleError(500, res, err);
+            });
 
-              if(err){
-                res.end(JSON.stringify({statusCode: s3Res.statusCode, message: err.toString()}));  
-              } else {
-                res.end(JSON.stringify({statusCode: s3Res.statusCode, message: 'File deleted.'}));    
-              }
-              
-            }
-        });
+            return s3res.pipe(res);
+        }).on('error', function(err){
+          self._handleError(500, res, err);
+        }).end();
       }; // end of return function object
       
   }; // end of deleteFile
