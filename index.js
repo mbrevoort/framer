@@ -102,7 +102,7 @@ var Framer = module.exports = function Framer(opts) {
           if (s3Response.statusCode === 200) {
             if(callback){
               s3Response.custom_uri = {
-                uri: prefix + '/raw' + destPath,
+                uri: prefix + destPath,
                 type: type
               };
               
