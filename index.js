@@ -204,9 +204,9 @@ var Framer = module.exports = function Framer(opts) {
         });
         
         res.setHeader('Content-Type', s3res.headers['content-type']);
-    		if (s3res.headers['content-length']) {
+        if (s3res.headers['content-length']) {
               res.setHeader('Content-Length', s3res.headers['content-length']);
-    		}
+        }
 
         return s3res.pipe(res);
       })
