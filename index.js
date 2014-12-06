@@ -20,6 +20,12 @@ var Framer = module.exports = function Framer(opts) {
 
   this._s3Client = knox.createClient(opts.s3);
 
+  if(opts.useImageMagick) {
+    gm = gm.subClass({
+      imageMagick: true
+    });
+  }
+
   this.handleUpload = function (opts) {
     if (!opts) opts = {};
     opts.prefix = opts.prefix || "";
@@ -36,10 +42,10 @@ var Framer = module.exports = function Framer(opts) {
       var isTypeHtml = (/text\/html/).test(acceptHeader);
       var isTypeText = (/text\/text/).test(acceptHeader);
       var contentType = 'application/json';
-      
+
       if(isTypeHtml) contentType = 'text/html';
       else if(isTypeText) contentType = 'text/text';
-      
+
 
       var headers = {}
         , form = new multiparty.Form()
@@ -93,7 +99,7 @@ var Framer = module.exports = function Framer(opts) {
               callback(err, s3Response);
             } else {
               res.writeHead(500, {'content-type': 'application/json'});
-              res.end(JSON.stringify({ statusCode: 500, error: err.toString() }));  
+              res.end(JSON.stringify({ statusCode: 500, error: err.toString() }));
             }
             return;
           }
@@ -105,10 +111,10 @@ var Framer = module.exports = function Framer(opts) {
                 uri: prefix + destPath,
                 type: type
               };
-              
+
               callback(null, s3Response);
             } else {
-              res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath, type: type }));  
+              res.end(JSON.stringify({ statusCode: 200, uri: prefix + '/raw' + destPath, type: type }));
             }
           }
           else {
@@ -121,9 +127,9 @@ var Framer = module.exports = function Framer(opts) {
               if(callback){
                 callback(null, s3Response);
               }else {
-                res.end(JSON.stringify({ statusCode: s3Response.statusCode, error: body }));  
+                res.end(JSON.stringify({ statusCode: s3Response.statusCode, error: body }));
               }
-              
+
             });
           }
         });
@@ -155,7 +161,7 @@ var Framer = module.exports = function Framer(opts) {
 
       self._s3Client.get(path).on('response', function(s3res){
         if (opts.cacheMaxAge) {
-          res.setHeader('Cache-Control', 'public, max-age=' + opts.cacheMaxAge); 
+          res.setHeader('Cache-Control', 'public, max-age=' + opts.cacheMaxAge);
         }
 
         s3res.on('error', function (err) {
@@ -165,10 +171,10 @@ var Framer = module.exports = function Framer(opts) {
         if (s3res.statusCode !== 200) {
           return self._handleError(s3res.statusCode, res, new Error('not found'));
         }
-        
+
         res.setHeader('Content-Type', s3res.headers['content-type']);
         res.setHeader('transfer-encoding', 'chunked');
-        
+
         if (sizeOptions === 'raw') {
           if (s3res.headers['content-length']) {
             res.setHeader('Content-Length', s3res.headers['content-length']);
@@ -202,7 +208,7 @@ var Framer = module.exports = function Framer(opts) {
         s3res.on('error', function (err) {
           self._handleError(500, res, err);
         });
-        
+
         res.setHeader('Content-Type', s3res.headers['content-type']);
         if (s3res.headers['content-length']) {
               res.setHeader('Content-Length', s3res.headers['content-length']);
@@ -237,7 +243,7 @@ var Framer = module.exports = function Framer(opts) {
           self._handleError(500, res, err);
         }).end();
       }; // end of return function object
-      
+
   }; // end of deleteFile
 
   this._handleError = function (code, res, err) {
