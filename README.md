@@ -1,3 +1,6 @@
+# DISCONTINUED - donated the "framer" npm package name to https://framer.com/ 
+
+
 # Framer 
 
 [![build status](https://secure.travis-ci.org/mbrevoort/framer.png)](http://travis-ci.org/mbrevoort/framer)
